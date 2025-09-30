@@ -1,1 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collectors Paradise - Firestore Ready Market</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate-900 (Black theme) */
+        }
+        /* Custom styling for cards */
+        .card-gold-border {
+            border: 2px solid #fbbf24; /* Amber-400 for gold outline */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .listing-card-image {
+            width: 100%;
+            height: 12rem; /* h-48 equivalent */
+            object-fit: cover;
+            border-bottom: 1px solid rgba(251, 191, 36, 0.5); /* border-amber-400/50 */
+        }
+    </style>
+    <!-- Icons from Lucide -->
+    <script type="module">
+        import { createIcons, Zap, Gamepad2, Baseball, Box, Disc3, Banknote, Search, MessageSquare, Discord } from 'https://cdn.jsdelivr.net/npm/lucide@latest/dist/esm.js';
+        createIcons({ icons: { Zap, Gamepad2, Baseball, Box, Disc3, Banknote, Search, MessageSquare, Discord } });
+    </script>
+</head>
+<body class="min-h-screen antialiased text-white">
 
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-slate-900 border-b border-amber-400/30 shadow-2xl">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center h-28 md:h-20">
+                <div class="flex-shrink-0 flex items-center pt-2 md:pt-0">
+                    <div data-lucide="zap" class="w-6 h-6 text-amber-400 mr-2"></div>
+                    <span class="text-2xl font-extrabold text-white">Collectors <span class="text-emerald-500">Paradise</span></span>
+                </div>
+                <div class="w-full md:w-1/2 mt-3 md:mt-0">
+                    <div class="relative">
+                        <input type="text" placeholder="Search for games, cards, antiques..." class="w-full py-2 pl-10 pr-4 rounded-xl bg-slate-800 text-white placeholder-slate-500 border border-slate-700 focus:ring-1 focus:ring-amber-400 focus:border-amber-400 transition" aria-label="Search items">
+                        <div data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400"></div>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#featured" class="text-slate-300 hover:text-amber-400 font-medium transition duration-150">Listings</a>
+                    <a href="#categories" class="text-slate-300 hover:text-amber-400 font-medium transition duration-150">Categories</a>
+                    <a href="#post-listing" class="text-slate-300 hover:text-amber-400 font-medium transition duration-150">Post Item</a>
+                    <a href="#discord" class="px-4 py-1.5 bg-amber-400 text-slate-900 rounded-lg hover:bg-amber-300 transition duration-300 font-semibold shadow-lg">Discord</a>
+                </nav>
+                <button id="mobile-menu-button" class="md:hidden p-2 absolute right-4 top-4 text-amber-400 rounded-lg hover:bg-slate-800 transition duration-150" aria-label="Toggle Navigation Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden w-full bg-slate-900 border-t border-amber-400/30 shadow-xl">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#featured" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-amber-400">Featured Listings</a>
+                <a href="#categories" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-amber-400">Categories</a>
+                <a href="#post-listing" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800 hover:text-amber-400">Post New Item</a>
+                <a href="#discord" class="block w-full text-center px-3 py-2 mt-2 bg-amber-500 text-slate-900 rounded-md hover:bg-amber-400 font-semibold">Discord Server</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-4">
+
+        <!-- Hero Section -->
+        <section class="bg-slate-800 py-16 md:py-24 rounded-xl mx-4 lg:mx-8 shadow-2xl card-gold-border">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl sm:text-6xl font-extrabold text-white mb-4 leading-tight">
+                    The <span class="text-amber-400">Vault</span> of Collectibles
+                </h1>
+                <p class="text-xl text-slate-400 mb-8 max-w-3xl mx-auto">
+                    A curated, high-value marketplace for premium collectibles.
+                </p>
+                <div class="space-x-4">
+                    <a href="#featured" class="inline-block px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-500 transition duration-300 transform hover:scale-105">
+                        Discover Rarities
+                    </a>
+                    <a href="#post-listing" class="inline-block px-8 py-3 border-2 border-amber-400 text-amber-400 font-bold rounded-xl hover:bg-amber-400 hover:text-slate-900 transition duration-300 transform hover:scale-105">
+                        Post Your Item
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="py-16 mx-4 lg:mx-8">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-amber-400 mb-10 text-center">Curated Collector Categories</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    <div class="bg-slate-800 p-6 rounded-xl card-gold-border text-center hover:shadow-2xl hover:scale-[1.02] transition duration-300 cursor-pointer border-t-4 border-amber-400/50">
+                        <div data-lucide="gamepad2" class="w-10 h-10 mx-auto mb-3 text-emerald-500"></div>
+                        <p class="text-lg font-semibold text-white">Video Games</p>
+                        <p class="text-sm text-slate-400">Sealed & Graded</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-xl card-gold-border text-center hover:shadow-2xl hover:scale-[1.02] transition duration-300 cursor-pointer border-t-4 border-amber-400/50">
+                        <div data-lucide="baseball" class="w-10 h-10 mx-auto mb-3 text-emerald-500"></div>
+                        <p class="text-lg font-semibold text-white">Sportscards</p>
+                        <p class="text-sm text-slate-400">Rookies & Inserts</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-xl card-gold-border text-center hover:shadow-2xl hover:scale-[1.02] transition duration-300 cursor-pointer border-t-4 border-amber-400/50">
+                        <div data-lucide="box" class="w-10 h-10 mx-auto mb-3 text-emerald-500"></div>
+                        <p class="text-lg font-semibold text-white">Vintage Toys</p>
+                        <p class="text-sm text-slate-400">MOC & Loose</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-xl card-gold-border text-center hover:shadow-2xl hover:scale-[1.02] transition duration-300 cursor-pointer border-t-4 border-amber-400/50">
+                        <div data-lucide="disc3" class="w-10 h-10 mx-auto mb-3 text-emerald-500"></div>
+                        <p class="text-lg font-semibold text-white">Albums & Vinyl</p>
+                        <p class="text-sm text-slate-400">1st Pressings</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-xl card-gold-border text-center hover:shadow-2xl hover:scale-[1.02] transition duration-300 cursor-pointer border-t-4 border-amber-400/50 col-span-2 md:col-span-1">
+                        <div data-lucide="banknote" class="w-10 h-10 mx-auto mb-3 text-emerald-500"></div>
+                        <p class="text-lg font-semibold text-white">Antiques & More</p>
+                        <p class="text-sm text-slate-400">High-Value Assets</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Listings Section (Dynamic) -->
+        <section id="featured" class="py-16 bg-slate-900 mx-4 lg:mx-8 rounded-xl shadow-lg border-t border-amber-400/30">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-amber-400 mb-10 text-center">💎 Current High-Value Offerings</h2>
+                
+                <!-- Loading/Error Status -->
+                <div id="loading-status" class="text-center text-slate-400 py-10">
+                    <svg class="animate-spin h-8 w-8 mx-auto text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="mt-3">Connecting to The Vault...</p>
+                </div>
+
+                <!-- Listings Container (where cards will be inserted) -->
+                <div id="listings-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Dynamic cards go here -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Post New Item Form Section -->
+        <section id="post-listing" class="py-16 mx-4 lg:mx-8">
+             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-slate-800 p-8 rounded-xl shadow-2xl border-4 border-emerald-600">
+                    <h2 class="text-3xl font-bold mb-6 text-emerald-500 text-center">Post a New Item to The Vault</h2>
+                    
+                    <form id="listing-form" class="space-y-4" onsubmit="event.preventDefault(); saveListing();">
+                        
+                        <!-- Title and Price -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="md:col-span-2">
+                                <label for="title" class="block text-sm font-medium text-slate-300">Item Title</label>
+                                <input type="text" id="title" required class="mt-1 block w-full rounded-md border-slate-700 bg-slate-900 text-white shadow-sm focus:border-amber-400 focus:ring-amber-400 p-3" placeholder="e.g., Sealed Pokemon Base Set Box">
+                            </div>
+                            <div>
+                                <label for="price" class="block text-sm font-medium text-slate-300">Price (USD)</label>
+                                <input type="number" id="price" required min="1" step="0.01" class="mt-1 block w-full rounded-md border-slate-700 bg-slate-900 text-white shadow-sm focus:border-amber-400 focus:ring-amber-400 p-3" placeholder="99.99">
+                            </div>
+                        </div>
+
+                        <!-- Category and Grade -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="category" class="block text-sm font-medium text-slate-300">Category</label>
+                                <select id="category" required class="mt-1 block w-full rounded-md border-slate-700 bg-slate-900 text-white shadow-sm focus:border-amber-400 focus:ring-amber-400 p-3">
+                                    <option value="" disabled selected>Select a Category</option>
+                                    <option value="Video Games">Video Games</option>
+                                    <option value="Sportscards">Sportscards</option>
+                                    <option value="Vintage Toys">Vintage Toys</option>
+                                    <option value="Albums & Vinyl">Albums & Vinyl</option>
+                                    <option value="Antiques & More">Antiques & More</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="grade" class="block text-sm font-medium text-slate-300">Grade/Condition Details</label>
+                                <input type="text" id="grade" required class="mt-1 block w-full rounded-md border-slate-700 bg-slate-900 text-white shadow-sm focus:border-amber-400 focus:ring-amber-400 p-3" placeholder="e.g., PSA 10, Mint, COA Included">
+                            </div>
+                        </div>
+                        
+                        <!-- Image URL -->
+                        <div>
+                            <label for="imageUrl" class="block text-sm font-medium text-slate-300">Image URL</label>
+                            <input type="url" id="imageUrl" required class="mt-1 block w-full rounded-md border-slate-700 bg-slate-900 text-white shadow-sm focus:border-amber-400 focus:ring-amber-400 p-3" placeholder="https://placehold.co/600x400/...">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-slate-300">Description</label>
+                            <textarea id="description" rows="3" required class="mt-1 block w-full rounded-md border-slate-700 bg-slate-900 text-white shadow-sm focus:border-amber-400 focus:ring-amber-400 p-3" placeholder="A brief, detailed description of the item..."></textarea>
+                        </div>
+                        
+                        <!-- Submit Button and Message Area -->
+                        <button type="submit" id="submit-button" class="w-full px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition duration-300 shadow-md transform hover:scale-[1.01]">
+                            Submit New Listing
+                        </button>
+
+                        <div id="listing-message" class="text-center mt-4 p-3 rounded-lg hidden" role="status"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Instructions Section -->
+        <section class="py-16 mx-4 lg:mx-8">
+             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-emerald-600 text-white p-8 rounded-xl shadow-2xl text-center border-4 border-amber-400">
+                    <h2 class="text-3xl font-bold mb-4">Payment & Direct Contact Information</h2>
+                    <p class="pt-4 text-slate-900 font-extrabold text-2xl">
+                        Please contact **289 821 2986** or **sheppy_95@hotmail.com** to confirm payment and shipping details.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Live Chat Button -->
+    <button id="live-chat-button" class="fixed bottom-6 right-6 p-4 bg-amber-400 text-slate-900 rounded-full shadow-2xl hover:bg-amber-300 transition duration-300 transform hover:scale-110 z-50 focus:outline-none focus:ring-4 focus:ring-amber-500/50" onclick="showChatModal()" aria-label="Open Live Chat">
+        <div data-lucide="message-square" class="w-7 h-7"></div>
+    </button>
+
+    <!-- Live Chat Modal Placeholder (Accessible) -->
+    <div id="chat-modal" class="fixed inset-0 bg-black bg-opacity-75 z-[60] hidden flex items-center justify-center p-4" onclick="hideChatModal(event)">
+        <div role="dialog" aria-modal="true" aria-labelledby="chat-title" class="bg-slate-900 rounded-xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-400/50 overflow-hidden" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 bg-slate-800 border-b border-amber-400/50">
+                <h3 id="chat-title" class="text-xl font-bold text-amber-400">Live Chat with Support</h3>
+                <button id="chat-close-button" onclick="hideChatModal()" class="text-slate-400 hover:text-white transition" aria-label="Close Chat Window">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-4 h-64 overflow-y-auto space-y-3" role="log" aria-live="polite">
+                <div class="text-sm text-slate-400 text-center italic">
+                    You have connected to Collectors Paradise Support.
+                </div>
+                <div class="flex justify-end">
+                    <div class="bg-emerald-600 text-white p-3 rounded-t-xl rounded-bl-xl max-w-[80%] shadow-lg">
+                        Hi! I'm interested in the item listed. Is it still available?
+                    </div>
+                </div>
+                <div class="flex justify-start">
+                    <div class="bg-slate-700 text-white p-3 rounded-t-xl rounded-br-xl max-w-[80%] shadow-lg">
+                        Hello! Yes, all items listed are available. How can I assist you with your purchase?
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-amber-400/50">
+                <input type="text" id="chat-input" placeholder="Type your message..." class="w-full py-2 px-3 rounded-lg bg-slate-800 text-white placeholder-slate-500 border border-slate-700 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition" aria-label="Chat message input">
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 mt-12 py-12 border-t border-amber-400/30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-white">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div class="col-span-2 md:col-span-2">
+                    <span class="text-2xl font-extrabold text-amber-400">Collectors Paradise</span>
+                    <p class="text-sm text-slate-400 mt-2">The exclusive marketplace for luxury collectibles.</p>
+                    <p id="user-id-display" class="text-xs text-slate-500 mt-4">User ID: N/A</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-white">Market</h3>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#featured" class="hover:text-amber-400 transition">Premium Listings</a></li>
+                        <li><a href="#categories" class="hover:text-amber-400 transition">Categories</a></li>
+                        <li><a href="#post-listing" class="hover:text-amber-400 transition">Post Your Item</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-white">Community</h3>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#discord" class="hover:text-amber-400 transition">Discord Servers</a></li>
+                        <li><a href="#" onclick="showChatModal(); return false;" class="hover:text-amber-400 transition">Live Chat Support</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition">Collector Stories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-white">Contact</h3>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                         <li><a href="tel:2898212986" class="hover:text-amber-400">289 821 2986</a></li>
+                        <li><a href="mailto:sheppy_95@hotmail.com" class="hover:text-amber-400">sheppy_95@hotmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-700 mt-8 pt-8 text-center">
+                <p class="text-sm text-slate-500">&copy; 2025 Collectors Paradise. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Firebase, App Logic, and Accessibility -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase and App variables
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let authReady = false;
+
+        // --- CRITICAL DEPLOYMENT FIX ---
+        // These variables check if the environment globals exist. If they don't (like on GitHub Pages),
+        // we use safe, dummy values to prevent script crashes, ensuring the rest of the site loads.
+        
+        // Safety check helper function
+        const getGlobalVariable = (name, defaultValue) => {
+            try {
+                // If the variable is defined globally (like in the Canvas environment)
+                if (typeof window[name] !== 'undefined') {
+                    return window[name];
+                }
+            } catch (e) {
+                // Ignore reference errors if the variable simply doesn't exist
+            }
+            return defaultValue;
+        };
+
+        const appId = getGlobalVariable('__app_id', 'github-static-app-id');
+        const firebaseConfigString = getGlobalVariable('__firebase_config', '{}');
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = JSON.parse(firebaseConfigString);
+            if (!firebaseConfig.apiKey) {
+                 // Force a dummy config if it's empty, to allow graceful failure instead of a crash.
+                firebaseConfig = { apiKey: 'DUMMY', authDomain: 'DUMMY', projectId: 'DUMMY' };
+            }
+        } catch(e) {
+            console.error("Failed to parse firebaseConfig:", e);
+            firebaseConfig = { apiKey: 'DUMMY', authDomain: 'DUMMY', projectId: 'DUMMY' };
+        }
+        const initialAuthToken = getGlobalVariable('__initial_auth_token', null);
+        
+        // DOM Elements
+        const listingsContainer = document.getElementById('listings-container');
+        const loadingStatus = document.getElementById('loading-status');
+        const listingForm = document.getElementById('listing-form');
+        const listingMessage = document.getElementById('listing-message');
+        const userIdDisplay = document.getElementById('user-id-display');
+
+        // Firestore collection path (Public data for sharing)
+        const LISTINGS_COLLECTION_PATH = `/artifacts/${appId}/public/data/listings`;
+
+        // Utility to format price
+        const formatPrice = (price) => {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(price);
+        };
+
+        // --- Firebase Initialization and Authentication ---
+        try {
+            setLogLevel('debug');
+            
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // Authentication handler
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    userIdDisplay.textContent = `User ID: ${userId}`;
+                    authReady = true;
+                    console.log("Firebase Auth Ready. User ID:", userId);
+                    loadListings(); // Start loading data after auth is confirmed
+                } else {
+                    // Sign in anonymously if no token is provided or if sign-in fails
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Authentication Error:", error);
+                        // If auth fails, we still set authReady to true to stop the spinner
+                        userId = 'AUTH_FAILED_' + Math.random().toString(36).substring(2, 8);
+                        userIdDisplay.textContent = `User ID: ${userId} (Auth Error)`;
+                        authReady = true;
+                        loadingStatus.classList.add('hidden');
+                        listingsContainer.innerHTML = '<p class="text-red-400 text-center col-span-full">Cannot connect to real-time database. Please check console for Firebase config errors.</p>';
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("Firebase Initialization Failed (CRITICAL):", error);
+            // This is the safety net that ensures the content isn't blank
+            loadingStatus.classList.add('hidden');
+            listingsContainer.innerHTML = `<p class="text-red-400 text-center col-span-full">Fatal Error: Could not initialize Firebase. Site structure loaded, but data is offline.</p>`;
+            authReady = true;
+            userId = 'OFFLINE_' + Math.random().toString(36).substring(2, 8);
+            userIdDisplay.textContent = `User ID: ${userId} (Offline)`;
+        }
+
+        // --- Firestore Data Functions ---
+
+        /**
+         * Saves a new listing to the public Firestore collection.
+         */
+        window.saveListing = async () => {
+            if (!authReady || !db || !userId || !firebaseConfig.apiKey) {
+                alertUserMessage('The database is currently offline or unauthenticated. Cannot post.', 'error');
+                return;
+            }
+
+            const title = document.getElementById('title').value.trim();
+            const price = parseFloat(document.getElementById('price').value);
+            const category = document.getElementById('category').value;
+            const grade = document.getElementById('grade').value.trim();
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            const description = document.getElementById('description').value.trim();
+
+            if (!title || isNaN(price) || !category || !grade || !imageUrl || !description) {
+                alertUserMessage('Please fill in all listing fields correctly.', 'error');
+                return;
+            }
+
+            const newListing = {
+                title,
+                price,
+                category,
+                grade,
+                imageUrl,
+                description,
+                ownerId: userId,
+                timestamp: Date.now() 
+            };
+
+            try {
+                // Show loading state
+                document.getElementById('submit-button').disabled = true;
+                document.getElementById('submit-button').textContent = 'Posting...';
+                alertUserMessage('Posting listing to the vault...', 'info');
+
+                const docRef = await addDoc(collection(db, LISTINGS_COLLECTION_PATH), newListing);
+                
+                alertUserMessage('Listing posted successfully!', 'success');
+                listingForm.reset();
+
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alertUserMessage(`Error posting listing: ${e.message}`, 'error');
+            } finally {
+                document.getElementById('submit-button').disabled = false;
+                document.getElementById('submit-button').textContent = 'Submit New Listing';
+            }
+        };
+
+        /**
+         * Sets up a real-time listener for the listings collection.
+         */
+        function loadListings() {
+            if (!db || !authReady) return;
+
+            const q = query(collection(db, LISTINGS_COLLECTION_PATH));
+            
+            onSnapshot(q, (snapshot) => {
+                listingsContainer.innerHTML = '';
+                
+                // Hide loading status after the first snapshot is received
+                if (loadingStatus) {
+                    loadingStatus.classList.add('hidden');
+                }
+
+                if (snapshot.empty) {
+                    listingsContainer.innerHTML = '<p class="text-slate-400 text-center col-span-full">No current listings. Be the first to post!</p>';
+                    return;
+                }
+
+                const listings = [];
+                snapshot.forEach((doc) => {
+                    listings.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort listings by timestamp (newest first)
+                listings.sort((a, b) => b.timestamp - a.timestamp);
+
+                listings.forEach(listing => {
+                    listingsContainer.insertAdjacentHTML('beforeend', createListingCard(listing));
+                });
+            }, (error) => {
+                console.error("Error listening to listings:", error);
+                listingsContainer.innerHTML = `<p class="text-red-400 text-center col-span-full">Error loading listings: ${error.message}</p>`;
+            });
+        }
+
+
+        // --- UI Rendering Functions ---
+
+        /**
+         * Creates the HTML structure for a single listing card.
+         */
+        function createListingCard(listing) {
+            const fallbackImageUrl = `https://placehold.co/600x400/0f172a/fbbf24?text=${listing.title.replace(/\s/g, '+').substring(0, 20)}`;
+            const imageUrl = listing.imageUrl || fallbackImageUrl;
+            
+            // Shorten the owner ID for display purposes
+            const displayOwnerId = listing.ownerId ? `${listing.ownerId.substring(0, 8)}...` : 'Unknown';
+
+            return `
+                <div class="bg-slate-800 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300 border border-amber-400/50">
+                    <img src="${imageUrl}" alt="Image of collectible: ${listing.title}" 
+                         class="listing-card-image" 
+                         onerror="this.onerror=null; this.src='${fallbackImageUrl}';" loading="lazy">
+                    <div class="p-5">
+                        <span class="inline-block bg-emerald-700 text-emerald-100 text-xs font-semibold px-2 py-0.5 rounded-full mb-2">${listing.category}</span>
+                        <h3 class="text-xl font-bold text-white truncate mb-1" title="${listing.title}">${listing.title}</h3>
+                        <p class="text-slate-400 text-sm font-medium mb-3">Details: ${listing.grade}</p>
+                        <p class="text-slate-500 text-xs mt-1 mb-3 truncate" title="Posted by: ${listing.ownerId}">Posted by: ${displayOwnerId}</p>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-2xl font-extrabold text-amber-400">${formatPrice(listing.price)}</span>
+                            <button class="px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-500 transition duration-300" 
+                                    onclick="showChatModal()">
+                                Inquire
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        /**
+         * Displays a temporary message to the user about form submission status.
+         */
+        function alertUserMessage(message, type) {
+            listingMessage.textContent = message;
+            listingMessage.className = `text-center mt-4 p-3 rounded-lg block`;
+            
+            if (type === 'success') {
+                listingMessage.classList.add('bg-emerald-900', 'text-emerald-300');
+            } else if (type === 'error') {
+                listingMessage.classList.add('bg-red-900', 'text-red-300');
+            } else {
+                 listingMessage.classList.add('bg-slate-700', 'text-slate-300');
+            }
+            
+            setTimeout(() => {
+                listingMessage.classList.add('hidden');
+            }, 5000);
+        }
+
+        // --- Live Chat Modal Functions and Accessibility ---
+
+        const chatModal = document.getElementById('chat-modal');
+        const chatButton = document.getElementById('live-chat-button');
+        const chatCloseButton = document.getElementById('chat-close-button');
+        const chatInput = document.getElementById('chat-input');
+        
+        window.showChatModal = () => {
+            chatModal.classList.remove('hidden');
+            chatModal.classList.add('flex');
+            chatInput.focus();
+        }
+
+        window.hideChatModal = (event) => {
+            if (!event || event.target.id === 'chat-modal' || event.target.id === 'chat-close-button' || event.target.closest('#chat-close-button')) {
+                chatModal.classList.add('hidden');
+                chatModal.classList.remove('flex');
+                chatButton.focus();
+            }
+        }
+
+        // Accessibility: Focus trap logic
+        function handleKeyboard(e) {
+            if (chatModal.classList.contains('flex')) {
+                const isTabPressed = (e.key === 'Tab' || e.keyCode === 9);
+
+                if (e.key === 'Escape') {
+                    window.hideChatModal();
+                    return;
+                }
+
+                if (!isTabPressed) {
+                    return;
+                }
+
+                const first = chatCloseButton;
+                const last = chatInput;
+                
+                if (e.shiftKey) { 
+                    if (document.activeElement === first) {
+                        last.focus();
+                        e.preventDefault();
+                    }
+                } else { 
+                    if (document.activeElement === last) {
+                        first.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        }
+        document.addEventListener('keydown', handleKeyboard);
+        
+        // --- Mobile Menu Toggle ---
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+        
+    </script>
+</body>
+</html>
